@@ -2,67 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use JetBrains\PhpStorm\NoReturn;
+
+//use JetBrains\PhpStorm\NoReturn;
 
 class PostController extends Controller
 {
     public function index()
     {
-         $posts = Post::where('publish', 1)->get();
+        $posts = Post::all();
 
-         foreach ( $posts as $post) {
+        return view('post.index', compact('posts') );
 
-             //echo $post->title . '<br>';
-
-         }
-
-         return view('posts', ['posts' => $posts] );
-
-         //dd($posts);
     }
 
-    public function create(): void
+    public function create()
     {
-        $postsArr = [
-            [
-                'title' => 'New Post',
-                'content' => 'That\'s my first created post',
-                'img' => '',
-                'publish' => 1
-            ],
-            [
-                'title' => 'New Created Post',
-                'content' => 'That\'s my second created post',
-                'img' => '',
-                'publish' => 1
-            ],
-        ];
+        $categories = Category::all();
 
-        foreach ( $postsArr as $post ) {
-            Post::create( $post );
-        }
+        return view('post.create', compact('categories'));
     }
 
-    public function update()
+    public function store()
     {
-        $post = Post::find(6);
-
-        $post->update([
-            'title' => 'New Created Post Updated',
-            'content' => 'That\'s my second created post Updated',
-            'img' => 'Updated',
-            'publish' => 0
+        $data = request()->validate([
+            'title' => 'string',
+            'content' => 'string',
+            'img' => 'string',
+            'category_id' => ''
         ]);
-        dd('updated');
+        Post::create($data);
+        return redirect()->route('post.index');
     }
 
-    public function delete()
+    public function show(Post $post)
     {
-        $post = Post::find(2);
+        return view('post.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        $categories = Category::all();
+
+        return view('post.edit', compact('post', 'categories'));
+    }
+
+    public function update(Post $post)
+    {
+        $data = request()->validate([
+            'title' => 'string',
+            'content' => 'string',
+            'img' => 'string',
+            'category_id' => ''
+        ]);
+        $post->update($data);
+        return redirect()->route('post.show', $post->id);
+    }
+
+    public function destroy(Post $post)
+    {
         $post->delete();
-        dd('deleted');
+        return redirect()->route('post.index');
     }
 
     public function restore()
@@ -76,7 +78,7 @@ class PostController extends Controller
     {
         $post = Post::firstOrCreate([
             'title' => 'New Post 3'
-        ],[
+        ], [
             'title' => 'New Post 3',
             'content' => 'That\'s my third created post',
             'img' => '',
@@ -89,7 +91,7 @@ class PostController extends Controller
     {
         $post = Post::updateOrCreate([
             'title' => 'Update or create Post 2'
-        ],[
+        ], [
             'title' => 'Update or create Post 2',
             'content' => 'Update or create Post content',
             'img' => '',
