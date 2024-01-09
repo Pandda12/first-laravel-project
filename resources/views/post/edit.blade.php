@@ -13,7 +13,7 @@
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>
-            <input type="text" name="img" class="form-control" id="image" placeholder="Image" value="{{ $post->img }}">
+            <input type="text" name="image" class="form-control" id="image" placeholder="Image" value="{{ $post->img }}">
         </div>
         <div class="mb-3">
             <label for="category">Category</label>
@@ -24,6 +24,19 @@
                         {{ $category->id === $post->category_id ? 'selected' : '' }}
 
                         value="{{ $category->id }}">{{ $category->title }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tags">Tags</label>
+            <select multiple class="form-select" id="tags" name="tags[]">
+                @foreach( $tags as $tag )
+                    <option
+                        @foreach( $post->tags as $postTag )
+                            {{ $tag->id === $postTag->id ? 'selected' : '' }}
+                        @endforeach
+
+                        value="{{ $tag->id }}">{{ $tag->title }}</option>
                 @endforeach
             </select>
         </div>

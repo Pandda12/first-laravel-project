@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Post;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\UpdateRequest;
 use App\Models\Post;
 
-class IndexController extends Controller
+class UpdateController extends BaseController
 {
-    public function __invoke()
+    public function __invoke( UpdateRequest $request, Post $post )
     {
-        $posts = Post::all();
-        return view('post.index', compact('posts') );
+        $data = $request->validated();
+
+        $this->service->update( $post, $data );
+
+        return redirect()->route('post.show', $post->id);
     }
 }
